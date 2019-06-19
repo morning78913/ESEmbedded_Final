@@ -5,10 +5,14 @@
 #include "usart.h"
 #include "asm_func.h"
 
-#define TASK_NUM 3
+#define TASK_NUM 4
 #define PSTACK_SIZE_WORDS 1024 //user stack size = 4 kB
 
 static uint32_t *psp_array[TASK_NUM];
+
+unsigned int Fibonacci;
+unsigned int Fibonacci_front = 0;
+unsigned int Fibonacci_rear  = 1;
 
 void setup_systick(uint32_t ticks);
 
@@ -43,6 +47,25 @@ void task2(void)
 	blink(LED_ORANGE); //should not return
 }
 
+void task3(void)
+{
+	Fibonacci = Fibonacci_front + Fibonacci_rear;
+
+	Fibonacci_front = Fibonacci_rear;
+	Fibonacci_rear = Fibonacci;
+
+	if(Fibonacci > 4294967295)
+	{
+		Fibonacci = 0;
+		Fibonacci_front = 0;
+		Fibonacci_rear  = 1;
+	}
+	
+	printf("[Task3] Fibonacci sequence is %x.\r\n\n", (unsigned int)Fibonacci);
+
+	for(int i = 0; i > 50 ; i++);
+}
+
 int main(void)
 {
 	init_usart1();
@@ -53,6 +76,7 @@ int main(void)
 	init_task(0, (uint32_t*)task0, user_stacks[0]+1024);
 	init_task(1, (uint32_t*)task1, user_stacks[1]+1024);
 	init_task(2, (uint32_t*)task2, user_stacks[2]+1024);
+	init_task(3, (uint32_t*)task3, user_stacks[3]+1024);
 
 	printf("[Kernel] Start in privileged thread mode.\r\n\n");
 
