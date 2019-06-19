@@ -49,21 +49,24 @@ void task2(void)
 
 void task3(void)
 {
-	Fibonacci = Fibonacci_front + Fibonacci_rear;
-
-	Fibonacci_front = Fibonacci_rear;
-	Fibonacci_rear = Fibonacci;
-
-	if(Fibonacci > 4294967295)
+	while(1)
 	{
-		Fibonacci = 0;
-		Fibonacci_front = 0;
-		Fibonacci_rear  = 1;
-	}
-	
-	printf("[Task3] Fibonacci sequence is %x.\r\n\n", (unsigned int)Fibonacci);
+		printf("Fibonacci_front: %u Fibonacci_rear: %u\r\n", (uint32_t)Fibonacci_front, (uint32_t)Fibonacci_rear);
 
-	for(int i = 0; i > 50 ; i++);
+		if(Fibonacci_front > 4294967295/2)
+		{
+			Fibonacci = 0;
+			Fibonacci_front = 0;
+			Fibonacci_rear  = 1;
+		}
+
+		Fibonacci_front = Fibonacci_rear;
+		Fibonacci_rear = Fibonacci;
+
+		Fibonacci = Fibonacci_front + Fibonacci_rear;
+
+		for(int i = 0; i < 10000 ; i++);
+	}
 }
 
 int main(void)
